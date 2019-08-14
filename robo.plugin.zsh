@@ -1,5 +1,3 @@
-#compdef robo
-
 # Functions
 _robo_get_command_list () {
     robo \
@@ -14,5 +12,5 @@ _robo () {
 }
 
 # Completion setup
-#compdef _robo robo
+compdef _robo robo
 
