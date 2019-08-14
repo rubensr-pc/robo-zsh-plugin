@@ -2,24 +2,17 @@
 
 # Functions
 _robo_get_command_list () {
-    php robo.phar \
+    robo \
     	| sed "1,/Available commands/d" \
-    	| awk '/^  [a-z]+/ { print $1 }'
+    	| awk '/^ +[a-z:]+/ { print $1 }'
 }
 
 _robo () {
-	if [ -f robo.phar ]; then
+	if type "robo" > /dev/null; then
         compadd `_robo_get_command_list`
     fi
 }
 
 # Completion setup
-compdef _robo php robo.phar
 compdef _robo robo
-
-# Alias
-alias robo='php robo.phar'
-
-# install robo in the current directory
-alias get_robo='curl -O http://robo.li/robo.phar && php robo.phar'
 
