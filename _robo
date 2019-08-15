@@ -1,14 +1,18 @@
 #compdef _robo robo
 
-_robo () {
-    _alternative 'command:command:_robo_get_command_list'
+function _robo {
+    _alternative 'arguments:command:_robo_get_command_list'
+
+#    _arguments -C \
+#        "-h[Show help information]" \
+#        "*::arg:->args"
 }
 	
-_robo_get_command_list () {
+function _robo_get_command_list {
     if type "robo" > /dev/null; then
-        robo \
+        compadd `robo \
         	| sed "1,/Available commands/d" \
-    	    | awk '/^ +[a-z:]+/ { print $1 }'
+    	    | awk '/^ +[a-z:]+/ { print $1 }'`
     fi
 }
 
