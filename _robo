@@ -1,11 +1,11 @@
 #compdef _robo robo
 
 function _robo {
-    _alternative 'arguments:command:_robo_get_command_list'
+#    _alternative 'arguments:command:_robo_get_command_list'
 
-#    _arguments -C \
-#        "-h[Show help information]" \
-#        "*::arg:->args"
+    _arguments -C \
+        "1: :_robo_get_command_list" \
+        "*::arg:->args"
 }
 	
 function _robo_get_command_list {
