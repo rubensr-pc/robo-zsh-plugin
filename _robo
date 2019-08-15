@@ -1,10 +1,9 @@
 #compdef _robo robo
 
 function _robo {
-#    _alternative 'arguments:command:_robo_get_command_list'
-
     _arguments -C \
         "1: :_robo_get_command_list" \
+        "2: :_files" \
         "*::arg:->args"
 }
 	
