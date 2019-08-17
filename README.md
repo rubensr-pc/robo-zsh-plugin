@@ -1,9 +1,8 @@
 # robo-zsh-plugin
 
 `robo-zsh-plugin` is a zsh plugin for
-[Robo](http://robo.li). This plugin can be install into oh-my-zsh [custom plugin](https://github.com/robbyrussell/oh-my-zsh#customization) folder.
-
-![Screenshot1](https://raw.github.com/shengyou/robo-zsh-plugin/master/images/robo.gif)
+[Robo](http://robo.li), based on https://github.com/shengyou/robo-zsh-plugin. It has been largely rewritten to perform more completions and to not require robo installation using a get_robo command - as long as you have `robo` in your PATH,
+this should be fine.
 
 ## Installation
 
@@ -18,7 +17,7 @@
 2. Clone the repository into a new directory called `robo`:
 
     ```console
-    git clone https://github.com/shengyou/robo-zsh-plugin.git robo
+    git clone https://github.com/rubensr-pc/robo-zsh-plugin.git robo
     ```
 
 3. Include `robo` plugin to your .zshrc file along with other plugins:
@@ -42,14 +41,15 @@ If you're using [zgen](https://github.com/tarjoilija/zgen):
 
 If you're using [Antigen](https://github.com/zsh-users/antigen):
 
-1. Add `antigen bundle shengyou/robo-zsh-plugin` to your `.zshrc` where you've listed your other plugins.
+1. Add `antigen bundle rubensr-pc/robo-zsh-plugin` to your `.zshrc` where you've listed your other plugins.
 2. Close and reopen your Terminal/iTerm window to **refresh context** and use the plugin. Alternatively, you can run `antigen bundle shengyou/robo-zsh-plugin` in a running shell to have antigen load the new plugin immediately & temporarily.
 
-## TODO & Bugs
+### [zplug](https://github.com/zplug/zplug)
 
-* This plugin currentlly only support completion if you install robo through get_robo command.
+zplug "rubensr-pc/robo-zsh-plugin"
 
-## Contact
-Shengyou Fan (If you like it, please endorse me on coderwall) [![endorse](https://api.coderwall.com/shengyou/endorsecount.png)](https://coderwall.com/shengyou)
+## TODO
 
-Any questions, feel free to [contact me](http://twitter.com/shengyou).
+* Include command descriptions in completion
+* Include command parameters in completion
+

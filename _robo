@@ -1,10 +1,46 @@
 #compdef _robo robo
 
 function _robo {
+    local context state state_descr line
+    typeset -A opt_args
+
     _arguments -C \
+        "--raw[output raw command help]" \
+        "-h[display help message]" \
+        "--help[display help message]" \
+        "-q[quiet]" \
+        "--quiet[quiet]" \
+        "-V[display version]" \
+        "--ansi[force ANSI output]" \
+        "--no-ansi[disable ANSI output]" \
+        "-n[no interaction]" \
+        "--no-interaction[no interaction]" \
+        "--simulate[show what would happen]" \
+        "-v[normal verbosity]" \
+        "-vv[more verbose]" \
+        "-vvv[very verbose]" \
+        "--verbose[normal verbosity]" \
+        "--format=[output format]:format:->formats" \
+        "--progress-delay=[number of seconds to show progress bar]" \
         "1: :_robo_get_command_list" \
-        "2: :_files" \
+        "2: :->commands" \
         "*::arg:->args"
+
+    case "$state" in
+        formats)
+            _values 'formats' txt xml json md
+            ;;
+        commands)
+            case $line[1] in
+                help)
+                    _robo_get_command_list
+                ;;
+                *)
+                    _files
+                ;;
+            esac
+            ;;
+    esac
 }
 	
 function _robo_get_command_list {
