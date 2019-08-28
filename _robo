@@ -42,12 +42,19 @@ function _robo {
             ;;
     esac
 }
-	
+
+function _robo_does_command_list_need_generating {
+    [[ ! -f .robocommandcache ]] || [[ RoboFile.php -nt .robocommandcache ]]
+}	
+
 function _robo_get_command_list {
     if type "robo" > /dev/null; then
-        compadd `robo \
+        if _robo_does_command_list_need_generating; then
+            robo \
         	| sed "1,/Available commands/d" \
-    	    | awk '/^ +[a-z:]+/ { print $1 }'`
+    	    | awk '/^ +[a-z:]+/ { print $1 }' \
+            > .robocommandcache
+        fi
+        compadd -X "==== Robo Commands ====" $(cat .robocommandcache)
     fi
 }
-
