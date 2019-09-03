@@ -40,6 +40,9 @@ function _robo {
                 ;;
             esac
             ;;
+        args)
+            _files
+            ;;
     esac
 }
 
