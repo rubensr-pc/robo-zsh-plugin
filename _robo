@@ -49,6 +49,7 @@ function _robo_does_command_list_need_generating {
 function _robo_get_command_list {
     if type "robo" > /dev/null; then
         if _robo_does_command_list_need_generating; then
+            setopt extendedglob
             local -a lines
             lines=(${(@f)"$(robo 2>/dev/null)"#*Available commands:})
             print -l ${${lines##([[:space:]]##)}%%[[:space:]]*} > .robocommandcache
