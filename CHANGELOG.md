@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.4 - 2019-09-07
+- Improved options handling
+
 ## 0.0.3 - 2019-08-28
 - Cache results for faster completion
 

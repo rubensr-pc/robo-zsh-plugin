@@ -5,26 +5,22 @@ function _robo {
     typeset -A opt_args
 
     _arguments -C \
-        "--raw[output raw command help]" \
-        "-h[display help message]" \
-        "--help[display help message]" \
-        "-q[quiet]" \
-        "--quiet[quiet]" \
-        "-V[display version]" \
-        "--ansi[force ANSI output]" \
-        "--no-ansi[disable ANSI output]" \
-        "-n[no interaction]" \
-        "--no-interaction[no interaction]" \
-        "--simulate[show what would happen]" \
-        "-v[normal verbosity]" \
-        "-vv[more verbose]" \
-        "-vvv[very verbose]" \
-        "--verbose[normal verbosity]" \
-        "--format=[output format]:format:->formats" \
-        "--progress-delay=[number of seconds to show progress bar]" \
-        "1: :_robo_get_command_list" \
-        "2: :->commands" \
-        "*::arg:->args"
+        '--raw[output raw command help]' \
+        '(-)'{-h,--help}'[display help message]' \
+        '(-q --quiet)'{-q,--quiet}'[quiet]' \
+        '(-)'{-V,--version}'[display version]' \
+        '(--no-ansi)--ansi[force ANSI output]' \
+        '(--ansi)--no-ansi[disable ANSI output]' \
+        {-n,--no-interaction}'[no interaction]' \
+        '--simulate[show what would happen]' \
+        '(-vv -vvv --verbose)-v[normal verbosity]' \
+        '(-v -vvv --verbose)-vv[more verbose]' \
+        '(-v -vv)'{-vvv,--verbose}'[debug]' \
+        '--format=[output format]:format:->formats' \
+        '--progress-delay=[number of seconds to show progress bar]' \
+        '1: :_robo_get_command_list' \
+        '2: :->commands' \
+        '*::arg:->args'
 
     case "$state" in
         formats)
