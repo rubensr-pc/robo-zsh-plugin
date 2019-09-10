@@ -18,15 +18,18 @@ function _robo {
     '(-v -vv)'{-vvv,--verbose}'[debug]' \
     '--format=[output format]:format:->formats' \
     '--progress-delay=[number of seconds to show progress bar]' \
-    '1: :_robo_get_command_list' \
-    '2: :->commands' \
+    '1: :->cmd' \
+    '2: :->subcmd' \
     '*::arg:->args'
 
   case "$state" in
     formats)
       _values 'formats' txt xml json md
       ;;
-    commands)
+    cmd)
+      _robo_get_command_list
+      ;;
+    subcmd)
       case $line[1] in
         help)
           _robo_get_command_list
@@ -49,14 +52,14 @@ function _robo_does_command_list_need_generating {
 
 #(( $+functions[_robo_get_command_list] )) ||
 function _robo_get_command_list {
-  if type "robo" &> /dev/null; then
+  if type "robo" &> /dev/null && [[ -f RoboFile.php ]]; then
     if _robo_does_command_list_need_generating; then
       setopt extendedglob
       local -a lines
-      lines=(${(@f)"$(_call_program list-commands robo list 2>/dev/null)"#*Available commands:})
+      lines=(${(@f)"$(_call_program list-commands robo list 2>&1)"#*Available commands:})
       print -l ${${lines##([[:space:]]##)}%%[[:space:]]*} > .robocommandcache
     fi
-    compadd -X "==== Robo Commands ====" $(cat .robocommandcache)
+    compadd -X "==== Robo Commands ====" $(<.robocommandcache)
   fi
 }
 
