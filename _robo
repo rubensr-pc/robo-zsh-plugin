@@ -47,12 +47,20 @@ function _robo_does_command_list_need_generating {
 }	
 
 function _robo_get_command_list {
-    if type "robo" > /dev/null; then
+    if type robo &> /dev/null; then
         if _robo_does_command_list_need_generating; then
-            local -a lines
-            lines=(${(@f)"$(robo 2>/dev/null)"#*Available commands:})
-            print -l ${${lines##([[:space:]]##)}%%[[:space:]]*} > .robocommandcache
+            local hline
+            local start_list
+            local -a cmdlist
+            robo list | while read -A hline; do
+                if [[ ${(j: :)hline} = "Available commands:" ]] then;
+                    start_list=1
+                    continue
+                fi
+                [[ start_list -ne 1 ]] && continue
+                cmdlist=($cmdlist "${hline[1]//:/\\:}:${hline[2,-1]//:/\\:}")
+            done
         fi
-        compadd -X "==== Robo Commands ====" $(cat .robocommandcache)
+        _describe -t robo-commands 'Robo command' cmdlist
     fi
 }
