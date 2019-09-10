@@ -1,61 +1,69 @@
 #compdef _robo robo
 
 function _robo {
-    local context state state_descr line
-    typeset -A opt_args
+  local context state state_descr line
+  typeset -A opt_args
 
-    _arguments -C \
-        '--raw[output raw command help]' \
-        '(-)'{-h,--help}'[display help message]' \
-        '(-q --quiet)'{-q,--quiet}'[quiet]' \
-        '(-)'{-V,--version}'[display version]' \
-        '(--no-ansi)--ansi[force ANSI output]' \
-        '(--ansi)--no-ansi[disable ANSI output]' \
-        {-n,--no-interaction}'[no interaction]' \
-        '--simulate[show what would happen]' \
-        '(-vv -vvv --verbose)-v[normal verbosity]' \
-        '(-v -vvv --verbose)-vv[more verbose]' \
-        '(-v -vv)'{-vvv,--verbose}'[debug]' \
-        '--format=[output format]:format:->formats' \
-        '--progress-delay=[number of seconds to show progress bar]' \
-        '1: :_robo_get_command_list' \
-        '2: :->commands' \
-        '*::arg:->args'
+  _arguments -C \
+    '--raw[output raw command help]' \
+    '(-)'{-h,--help}'[display help message]' \
+    '(-q --quiet)'{-q,--quiet}'[quiet]' \
+    '(-)'{-V,--version}'[display version]' \
+    '(--no-ansi)--ansi[force ANSI output]' \
+    '(--ansi)--no-ansi[disable ANSI output]' \
+    {-n,--no-interaction}'[no interaction]' \
+    '--simulate[show what would happen]' \
+    '(-vv -vvv --verbose)-v[normal verbosity]' \
+    '(-v -vvv --verbose)-vv[more verbose]' \
+    '(-v -vv)'{-vvv,--verbose}'[debug]' \
+    '--format=[output format]:format:->formats' \
+    '--progress-delay=[number of seconds to show progress bar]' \
+    '1: :_robo_get_command_list' \
+    '2: :->commands' \
+    '*::arg:->args'
 
-    case "$state" in
-        formats)
-            _values 'formats' txt xml json md
-            ;;
-        commands)
-            case $line[1] in
-                help)
-                    _robo_get_command_list
-                ;;
-                *)
-                    _files
-                ;;
-            esac
-            ;;
-        args)
-            _files
-            ;;
-    esac
+  case "$state" in
+    formats)
+      _values 'formats' txt xml json md
+      ;;
+    commands)
+      case $line[1] in
+        help)
+          _robo_get_command_list
+          ;;
+        *)
+          _files
+          ;;
+      esac
+      ;;
+    args)
+      _files
+      ;;
+  esac
 }
 
-(( $+functions[_robo_does_command_list_need_generating] )) ||
+#(( $+functions[_robo_does_command_list_need_generating] )) ||
 function _robo_does_command_list_need_generating {
-    [[ ! -f .robocommandcache ]] || [[ RoboFile.php -nt .robocommandcache ]]
+  [[ ! -f .robocommandcache ]] || [[ RoboFile.php -nt .robocommandcache ]]
 }	
 
-(( $+functions[_robo_get_command_list] )) ||
+#(( $+functions[_robo_get_command_list] )) ||
 function _robo_get_command_list {
-    if type "robo" > /dev/null; then
-        if _robo_does_command_list_need_generating; then
-            setopt extendedglob
-            local -a lines
-            lines=(${(@f)"$(_call_program list-commands robo list 2>/dev/null)"#*Available commands:})
-            print -l ${${lines##([[:space:]]##)}%%[[:space:]]*} > .robocommandcache
-        fi
-        compadd -X "==== Robo Commands ====" $(cat .robocommandcache)
+  if type "robo" &> /dev/null; then
+    if _robo_does_command_list_need_generating; then
+      setopt extendedglob
+      local -a lines
+      lines=(${(@f)"$(_call_program list-commands robo list 2>/dev/null)"#*Available commands:})
+      print -l ${${lines##([[:space:]]##)}%%[[:space:]]*} > .robocommandcache
     fi
+    compadd -X "==== Robo Commands ====" $(cat .robocommandcache)
+  fi
 }
+
+# Local Variables:
+# mode: Shell-Script
+# sh-indentation: 2
+# indent-tabs-mode: nil
+# sh-basic-offset: 2
+# End:
+# vim: ft=zsh sw=2 ts=2 et
