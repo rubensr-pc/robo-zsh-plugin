@@ -42,16 +42,18 @@ function _robo {
     esac
 }
 
+(( $+functions[_robo_does_command_list_need_generating] )) ||
 function _robo_does_command_list_need_generating {
     [[ ! -f .robocommandcache ]] || [[ RoboFile.php -nt .robocommandcache ]]
 }	
 
+(( $+functions[_robo_get_command_list] )) ||
 function _robo_get_command_list {
     if type "robo" > /dev/null; then
         if _robo_does_command_list_need_generating; then
             setopt extendedglob
             local -a lines
-            lines=(${(@f)"$(robo 2>/dev/null)"#*Available commands:})
+            lines=(${(@f)"$(_call_program list-commands robo list 2>/dev/null)"#*Available commands:})
             print -l ${${lines##([[:space:]]##)}%%[[:space:]]*} > .robocommandcache
         fi
         compadd -X "==== Robo Commands ====" $(cat .robocommandcache)
