@@ -1,7 +1,14 @@
 #compdef _robo robo
 
+# Zsh completion script for Robo.
+#
+# To make things better:
+# zstyle ':completion:*:*:robo::' use-cache on
+# zstyle ':completion:*:*:robo::' accept-exact '*(N)'
+# zstyle ':completion:*:*:robo::' completer _complete _approximate
+
 function _robo {
-  local context state state_descr line
+  local curcontext="$curcontext" state state_descr line
   integer ret=1
   typeset -A opt_args
 
@@ -22,6 +29,8 @@ function _robo {
     '1: :->cmd' \
     '2: :->subcmd' \
     '*::arg:->args'
+
+  zstyle -s ":completion:$curcontext:" cache-policy _robo_cache_policy
 
   case $state in
     formats)
@@ -48,6 +57,16 @@ function _robo {
   return ret
 }
 
+_robo_cache_policy() {
+  typeset -a old
+
+  # cache for a minute
+  old=( "$1"(mm+10) )
+  (( $#old )) && return 0
+
+  return 1
+}
+
 #(( $+functions[_robo_does_command_list_need_generating] )) ||
 function _robo_does_command_list_need_generating {
   [[ ! -f .robocommandcache ]] || [[ RoboFile.php -nt .robocommandcache ]]
@@ -56,13 +75,16 @@ function _robo_does_command_list_need_generating {
 #(( $+functions[_robo_get_command_list] )) ||
 function _robo_get_command_list {
   if type "robo" &> /dev/null && [[ -f RoboFile.php ]]; then
-    if _robo_does_command_list_need_generating; then
+    local cacheid="robo:${PWD//\//_}"
+    if _cache_invalid "$cacheid" || ! _retrieve_cache "$cacheid"; then
       setopt extendedglob
-      local -a lines
-      lines=(${(@f)"$(_call_program list-commands robo list 2>&1)"#*Available commands:})
-      print -l ${${lines##([[:space:]]##)}%%[[:space:]]*} > .robocommandcache
+      local -a lines cmds
+      lines=(${(f)"$(_call_program list-commands robo list 2>&1)"})
+      lines=(${(M)${lines[$((${lines[(i)*commands:]} + 1)),-1]}:# *})
+      cmds=(${${lines##([[:space:]]##)}%%[[:space:]]*})
+      _store_cache "$cacheid" cmds
     fi
-    compadd -X "==== Robo Commands ====" $(<.robocommandcache)
+    compadd -X "==== Robo Commands ====" $cmds
   fi
 }
 
