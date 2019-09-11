@@ -2,6 +2,7 @@
 
 function _robo {
   local context state state_descr line
+  integer ret=1
   typeset -A opt_args
 
   _arguments -C \
@@ -22,27 +23,29 @@ function _robo {
     '2: :->subcmd' \
     '*::arg:->args'
 
-  case "$state" in
+  case $state in
     formats)
-      _values 'formats' txt xml json md
+      _values 'formats' txt xml json md && ret=0
       ;;
     cmd)
-      _robo_get_command_list
+      _robo_get_command_list && ret=0
       ;;
     subcmd)
       case $line[1] in
         help)
-          _robo_get_command_list
+          _robo_get_command_list && ret=0
           ;;
         *)
-          _files
+          _files && ret=0
           ;;
       esac
       ;;
     args)
-      _files
+      _files && ret=0
       ;;
   esac
+
+  return ret
 }
 
 #(( $+functions[_robo_does_command_list_need_generating] )) ||
