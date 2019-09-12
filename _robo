@@ -57,7 +57,7 @@ function _robo {
   return ret
 }
 
-_robo_cache_policy() {
+function _robo_cache_policy() {
   typeset -a old
 
   # cache for a minute
@@ -81,10 +81,10 @@ function _robo_get_command_list {
       local -a lines cmds
       lines=(${(f)"$(_call_program list-commands robo list 2>&1)"})
       lines=(${(M)${lines[$((${lines[(i)*commands:]} + 1)),-1]}:# *})
-      cmds=(${${lines##([[:space:]]##)}%%[[:space:]]*})
+      cmds=(${${${lines##([[:space:]]##)}%%[[:space:]]*}//:/\\:})
       _store_cache "$cacheid" cmds
     fi
-    compadd -X "==== Robo Commands ====" $cmds
+    _describe -t robo-commands 'robo commands' cmds
   fi
 }
 
