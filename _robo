@@ -2,13 +2,14 @@
 
 # Zsh completion script for Robo.
 #
+# version: 0.1.0
+# github:  https://github.com/rubensr-pc/robo-zsh-plugin
+#
 # To make things better:
-# zstyle ':completion:*:*:robo::' use-cache on
-# zstyle ':completion:*:*:robo::' accept-exact '*(N)'
-# zstyle ':completion:*:*:robo::' completer _complete _approximate
+# zstyle ':completion::*:robo:*:' use-cache on
 
 function _robo {
-  local curcontext="$curcontext" state state_descr line
+  local curcontext="$curcontext" state line
   integer ret=1
   typeset -A opt_args
 
@@ -27,10 +28,7 @@ function _robo {
     '--format=[output format]:format:->formats' \
     '--progress-delay=[number of seconds to show progress bar]' \
     '1: :->cmd' \
-    '2: :->subcmd' \
-    '*::arg:->args'
-
-  zstyle -s ":completion:$curcontext:" cache-policy _robo_cache_policy
+    '*:: :->help-or-argument'
 
   case $state in
     formats)
@@ -39,8 +37,9 @@ function _robo {
     cmd)
       _robo_get_command_list && ret=0
       ;;
-    subcmd)
-      case $line[1] in
+    help-or-argument)
+      curcontext=${curcontext%:*:*}:robo-${words[1]//:/_}:
+      case $words[1] in
         help)
           _robo_get_command_list && ret=0
           ;;
@@ -49,31 +48,33 @@ function _robo {
           ;;
       esac
       ;;
-    args)
-      _files && ret=0
-      ;;
   esac
 
   return ret
 }
 
+#(( $+functions[_robo_cache_policy] )) ||
 function _robo_cache_policy() {
   typeset -a old
 
-  # cache for a minute
-  old=( "$1"(mm+10) )
+  [[ RoboFile.php -nt "$1" ]] && return 0
+
+  # cache for a week
+  old=( "$1"(Nm+7) )
   (( $#old )) && return 0
 
   return 1
 }
 
-#(( $+functions[_robo_does_command_list_need_generating] )) ||
-function _robo_does_command_list_need_generating {
-  [[ ! -f .robocommandcache ]] || [[ RoboFile.php -nt .robocommandcache ]]
-}	
-
 #(( $+functions[_robo_get_command_list] )) ||
 function _robo_get_command_list {
+  local cache_policy
+
+  zstyle -s ":completion::complete:robo::" cache-policy cache_policy
+  if [[ -z "$cache_policy" ]]; then
+    zstyle ":completion::complete:robo::" cache-policy _robo_cache_policy
+  fi
+
   if type "robo" &> /dev/null && [[ -f RoboFile.php ]]; then
     local cacheid="robo:${PWD//\//_}"
     if _cache_invalid "$cacheid" || ! _retrieve_cache "$cacheid"; then
@@ -84,7 +85,7 @@ function _robo_get_command_list {
       cmds=(${${${lines##([[:space:]]##)}%%[[:space:]]*}//:/\\:})
       _store_cache "$cacheid" cmds
     fi
-    _describe -t robo-commands 'robo commands' cmds
+    _describe -t robo-commands 'robo command' cmds
   fi
 }
 
