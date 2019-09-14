@@ -5,7 +5,7 @@
 # version: 0.1.0
 # github:  https://github.com/rubensr-pc/robo-zsh-plugin
 #
-# To make things better:
+# To make things faster:
 # zstyle ':completion::*:robo:*:' use-cache on
 
 function _robo {

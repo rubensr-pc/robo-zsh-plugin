@@ -50,6 +50,5 @@ zplug "rubensr-pc/robo-zsh-plugin"
 
 ## TODO
 
-* Include command descriptions in completion
 * Include command parameters in completion
 
