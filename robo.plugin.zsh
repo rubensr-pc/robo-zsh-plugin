@@ -1,5 +1,3 @@
-#compdef _robo robo
-
 # Zsh completion script for Robo.
 #
 # version: 0.1.0
@@ -7,6 +5,8 @@
 #
 # To make things faster:
 # zstyle ':completion::*:robo:*:' use-cache on
+
+compdef _robo robo
 
 function _robo {
   local curcontext="$curcontext" state line
